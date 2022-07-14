@@ -16,8 +16,23 @@ mix.js('resources/js/app.js', 'public/js').vue()
         require('postcss-import'),
         require('tailwindcss'),
     ])
-    .webpackConfig(require('./webpack.config'));
+    .webpackConfig(require('./webpack.config'))
+    .sourceMaps();
+    
 
 if (mix.inProduction()) {
     mix.version();
 }
+
+mix.browserSync({
+    proxy: "http://localhost:8000",
+    files: [ //Files for watching
+        "./app/**/*",
+        "./routes/**/*",
+        "./public/assets/css/*.css",
+        "./public/js/*.js",
+        "./resources/views/**/*.blade.php",
+        "./resources/js/**/*.vue",
+        "./resources/lang/**/*",
+    ],
+});

@@ -42,6 +42,41 @@ return [
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
+            
+        'OGB' => [
+            'driver' => 'sqlite',
+            'database' => database_path('OGB.SQLite3'),
+            'prefix' => '',
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+        ],
+        
+        'kaOrth' => [
+            'driver' => 'sqlite',
+            'database' => database_path('kaOrth.SQLite3'),
+            'prefix' => '',
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+        ],
+        
+        'NTPT' => [
+            'driver' => 'sqlite',
+            'database' => database_path('NTPT.SQLite3'),
+            'prefix' => '',
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+        ],
+        
+        'NTPT+' => [
+            'driver' => 'sqlite',
+            'database' => database_path('NTPTjson.SQLite3'),
+            'prefix' => '',
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+        ],
+        
+        'GreVamvas' => [
+            'driver' => 'sqlite',
+            'database' => database_path('GreVamvas.SQLite3'),
+            'prefix' => '',
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+        ],
 
         'mysql' => [
             'driver' => 'mysql',

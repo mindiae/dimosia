@@ -1,9 +1,7 @@
 <template>
     <div>
         <Head :title="title" />
-
-        <jet-banner />
-
+            
         <div class="min-h-screen bg-gray-100">
             <nav class="bg-white border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
@@ -19,8 +17,17 @@
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <jet-nav-link :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Dashboard
+                                <jet-nav-link v-if="$page.props.user" :href="route('dashboard')" :active="route().current('dashboard')">
+                                    {{ __('Dashboard') }}
+                                </jet-nav-link>
+                                <jet-nav-link :href="route('home')" :active="route().current('home')">
+                                    {{ __('Home') }}
+                                </jet-nav-link>
+                                <jet-nav-link :href="route('literature')" :active="route().current('literature')">
+                                    {{ __('Literature') }}
+                                </jet-nav-link>
+                                <jet-nav-link :href="route('bible')" :active="route().current('bible')">
+                                    {{ __('Bible') }}
                                 </jet-nav-link>
                             </div>
                         </div>
@@ -28,6 +35,7 @@
                         <div class="hidden sm:flex sm:items-center sm:ml-6">
                             <div class="ml-3 relative">
                                 <!-- Teams Dropdown -->
+                                <div v-if="$page.props.user">
                                 <jet-dropdown align="right" width="60" v-if="$page.props.jetstream.hasTeamFeatures">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
@@ -79,11 +87,36 @@
                                         </div>
                                     </template>
                                 </jet-dropdown>
+                                </div>
+                            </div>
+                            
+                            <!-- Language Dropdown -->
+                            <div class="ml-3 relative">
+                                <jet-dropdown align="right" width="48">
+                                    <template #trigger>
+                                        <span class="inline-flex rounded-md">
+                                            <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition">
+                                                {{ this.$page.props.languages[this.$page.props.locale] }}
+                                                <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                </svg>
+                                            </button>
+                                        </span>
+                                    </template>
+                                    <template #content>
+                                        <template v-for="(language, locale) in this.$page.props.languages">
+                                            <jet-dropdown-link v-if="locale != this.$page.props.locale" :href="route('lang.switch', locale)">
+                                                {{ language }}
+                                            </jet-dropdown-link>
+                                        </template>
+                                        
+                                    </template>
+                                </jet-dropdown>
                             </div>
 
                             <!-- Settings Dropdown -->
                             <div class="ml-3 relative">
-                                <jet-dropdown align="right" width="48">
+                                <jet-dropdown v-if="$page.props.user" align="right" width="48">
                                     <template #trigger>
                                         <button v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
                                             <img class="h-8 w-8 rounded-full object-cover" :src="$page.props.user.profile_photo_url" :alt="$page.props.user.name" />
@@ -103,11 +136,11 @@
                                     <template #content>
                                         <!-- Account Management -->
                                         <div class="block px-4 py-2 text-xs text-gray-400">
-                                            Manage Account
+                                            {{ __('Manage Account') }}
                                         </div>
 
                                         <jet-dropdown-link :href="route('profile.show')">
-                                            Profile
+                                            {{ __('Profile') }}
                                         </jet-dropdown-link>
 
                                         <jet-dropdown-link :href="route('api-tokens.index')" v-if="$page.props.jetstream.hasApiFeatures">
@@ -119,11 +152,20 @@
                                         <!-- Authentication -->
                                         <form @submit.prevent="logout">
                                             <jet-dropdown-link as="button">
-                                                Log Out
+                                                {{ __('Log Out') }}
                                             </jet-dropdown-link>
                                         </form>
                                     </template>
                                 </jet-dropdown>
+                                <div v-else>
+                                    <Link :href="route('login')" class="text-sm text-gray-500 hover:text-gray-700">
+                                        {{ __('Log in') }}
+                                    </Link>
+
+                                    <Link :href="route('register')" class="ml-4 text-sm text-gray-500 hover:text-gray-700">
+                                        {{ __('Register') }}
+                                    </Link>
+                                </div>
                             </div>
                         </div>
 
@@ -142,13 +184,22 @@
                 <!-- Responsive Navigation Menu -->
                 <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="sm:hidden">
                     <div class="pt-2 pb-3 space-y-1">
-                        <jet-responsive-nav-link :href="route('dashboard')" :active="route().current('dashboard')">
-                            Dashboard
+                        <jet-responsive-nav-link v-if="$page.props.user" :href="route('dashboard')" :active="route().current('dashboard')">
+                            {{ __('Dashboard') }}
+                        </jet-responsive-nav-link>
+                        <jet-responsive-nav-link :href="route('home')" :active="route().current('home')">
+                            {{ __('Home') }}
+                        </jet-responsive-nav-link>
+                        <jet-responsive-nav-link :href="route('literature')" :active="route().current('literature')">
+                            {{ __('Literature') }}
+                        </jet-responsive-nav-link>
+                        <jet-responsive-nav-link :href="route('bible')" :active="route().current('bible')">
+                            {{ __('Bible') }}
                         </jet-responsive-nav-link>
                     </div>
 
                     <!-- Responsive Settings Options -->
-                    <div class="pt-4 pb-1 border-t border-gray-200">
+                    <div v-if="$page.props.user" class="pt-4 pb-1 border-t border-gray-200">
                         <div class="flex items-center px-4">
                             <div v-if="$page.props.jetstream.managesProfilePhotos" class="shrink-0 mr-3" >
                                 <img class="h-10 w-10 rounded-full object-cover" :src="$page.props.user.profile_photo_url" :alt="$page.props.user.name" />
@@ -162,7 +213,7 @@
 
                         <div class="mt-3 space-y-1">
                             <jet-responsive-nav-link :href="route('profile.show')" :active="route().current('profile.show')">
-                                Profile
+                                {{ __('Profile') }}
                             </jet-responsive-nav-link>
 
                             <jet-responsive-nav-link :href="route('api-tokens.index')" :active="route().current('api-tokens.index')" v-if="$page.props.jetstream.hasApiFeatures">
@@ -172,7 +223,7 @@
                             <!-- Authentication -->
                             <form method="POST" @submit.prevent="logout">
                                 <jet-responsive-nav-link as="button">
-                                    Log Out
+                                    {{ __('Log Out') }}
                                 </jet-responsive-nav-link>
                             </form>
 
@@ -213,6 +264,15 @@
                             </template>
                         </div>
                     </div>
+                    <div v-else>
+                        <jet-responsive-nav-link :href="route('login')">
+                            {{ __('Log in') }}
+                        </jet-responsive-nav-link>
+
+                        <jet-responsive-nav-link :href="route('register')">
+                            {{ __('Register') }}
+                        </jet-responsive-nav-link>
+                    </div>
                 </div>
             </nav>
 
@@ -227,6 +287,13 @@
             <main>
                 <slot></slot>
             </main>
+            
+            <!-- Page Footer -->
+            <footer class="sticky top-[100vh] bg-white shadow" v-if="$slots.footer">
+                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    <slot name="footer"></slot>
+                </div>
+            </footer>
         </div>
     </div>
 </template>
@@ -240,23 +307,23 @@
     import JetNavLink from '@/Jetstream/NavLink.vue'
     import JetResponsiveNavLink from '@/Jetstream/ResponsiveNavLink.vue'
     import { Head, Link } from '@inertiajs/inertia-vue3';
-
-    export default defineComponent({
+    
+    export default defineComponent ({
         props: {
             title: String,
         },
-
         components: {
-            Head,
             JetApplicationMark,
             JetBanner,
             JetDropdown,
             JetDropdownLink,
             JetNavLink,
             JetResponsiveNavLink,
+            Head,
             Link,
         },
-
+        created: function () {
+        },
         data() {
             return {
                 showingNavigationDropdown: false,
